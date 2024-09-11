@@ -1,4 +1,5 @@
 use volatile::Volatile;
+use core::fmt::{Write, Result};
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -55,6 +56,13 @@ pub struct Writer {
     buffer: &'static mut Buffer, 
 }
 
+impl Write for Writer {
+    fn write_str(&mut self, s: &str) -> Result {
+        self.write_string(s);
+        Ok(())
+    }
+}
+
 impl Writer {
     pub fn write_byte(&mut self, byte : u8){
         match byte {
@@ -102,6 +110,6 @@ pub fn print_something(){
 
     writer.write_byte(b'H');
     writer.write_string("ello ");
-    writer.write_string("Wörld!");
+    write!(writer, "The numbers are {} and {}", 42, 1.0/3.0).unwrap();
 
 }
