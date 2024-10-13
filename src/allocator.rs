@@ -3,7 +3,9 @@ use core::ptr::{addr_eq, null_mut};
 use x86_64::{structures::paging::{mapper::MapToError, page, FrameAllocator, Mapper, Page, PageTableFlags, Size4KiB}, VirtAddr};
 use linked_list_allocator::LockedHeap;
 use bump::BumpAllocator;
+use linked_list::LinkedListAllocator;
 pub mod bump;
+pub mod linked_list;
 
 
 pub const HEAP_START: usize = 0x_4444_4444_0000;
@@ -50,7 +52,7 @@ unsafe impl GlobalAlloc for Dummy{
 }*/
 
 #[global_allocator]
-static ALLOCATOR: Locked<BumpAllocator> = Locked::new(BumpAllocator::new());
+static ALLOCATOR: Locked<LinkedListAllocator> = Locked::new(LinkedListAllocator::new());
 
 pub fn init_heap(mapper: &mut impl Mapper<Size4KiB>, frame_allocator: &mut impl FrameAllocator<Size4KiB>) -> Result<(), MapToError<Size4KiB>> {
     let page_range = {
